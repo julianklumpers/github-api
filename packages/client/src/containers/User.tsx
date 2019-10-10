@@ -1,10 +1,13 @@
 import React from 'react'
-import Container from './../components/Container'
+import Container from '@material-ui/core/Container'
+import Grid from '@material-ui/core/Grid'
 import { gql } from 'apollo-boost'
 import { useQuery } from '@apollo/react-hooks'
-import { useParams, useHistory } from 'react-router'
+import { useParams } from 'react-router'
+import TableCell from '@material-ui/core/TableCell'
+import TableRow from '@material-ui/core/TableRow'
 import Table from '../components/Table'
-import Button from '../components/Button'
+import BreadCrumb from './../components/BreadCrumb'
 import { Repo } from '@generated/graphql-types'
 
 const GET_USER_REPOS = gql`
@@ -24,7 +27,6 @@ const GET_USER_REPOS = gql`
 
 const User: React.SFC = () => {
   const { username } = useParams()
-  const { push } = useHistory()
   const { loading, data, error } = useQuery(GET_USER_REPOS, { variables: { username }, skip: !username })
 
   if (loading) return <div>Loading...</div>
@@ -34,29 +36,29 @@ const User: React.SFC = () => {
   return (
     <>
       <Container>
-        <div className="column is-four-fifths">
-          <Button text="< Search" onClick={() => push('/users')} />
-        </div>
-      </Container>
-      <Container>
-        <div className="column is-four-fifths">
+        <Grid container spacing={3}>
+          <Grid item xs={12}>
+            <BreadCrumb />
+          </Grid>
+        </Grid>
+        <Grid item xs={12}>
           <Table tableHeads={['Name', 'URL', 'Stars', 'Forked']} data={data} loading={loading} error={error}>
             {({ getUserRepos: userRepos }: { getUserRepos: Repo[] }) =>
               userRepos.map((repo) => (
-                <tr key={repo.id}>
-                  <td>{repo.name}</td>
-                  <td>
+                <TableRow key={repo.id}>
+                  <TableCell>{repo.name}</TableCell>
+                  <TableCell>
                     <a href={repo.html_url} target="_NEW">
                       Go to repo
                     </a>
-                  </td>
-                  <td>{repo.stargazers_count}</td>
-                  <td>{repo.fork ? 'Forked' : 'Owner'}</td>
-                </tr>
+                  </TableCell>
+                  <TableCell>{repo.stargazers_count}</TableCell>
+                  <TableCell>{repo.fork ? 'Forked' : 'Owner'}</TableCell>
+                </TableRow>
               ))
             }
           </Table>
-        </div>
+        </Grid>
       </Container>
     </>
   )

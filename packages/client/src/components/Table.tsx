@@ -1,4 +1,10 @@
 import React from 'react'
+import { makeStyles } from '@material-ui/core/styles'
+import { Table as MTable } from '@material-ui/core'
+import TableBody from '@material-ui/core/TableBody'
+import TableCell from '@material-ui/core/TableCell'
+import TableRow from '@material-ui/core/TableRow'
+import TableHead from '@material-ui/core/TableHead'
 import { ApolloQueryResult } from 'apollo-boost'
 import { useQuery } from '@apollo/react-hooks'
 
@@ -10,24 +16,31 @@ interface Props {
   children(data: any): React.ReactNode
 }
 
+const useStyles = makeStyles((theme) => ({
+  table: {
+    width: '100%',
+  },
+}))
+
 const Table: React.SFC<Props> = ({ data, loading, error, tableHeads, children }) => {
+  const classes = useStyles()
+
   if (loading) return <div>Loading....</div>
   // always show the first message
   if (error) return <div>{error.graphQLErrors[0].message}</div>
   if (!data) return <div>Nothing to display</div>
 
   return (
-    <table className="table is-fullwidth">
-      <thead>
-        <tr>
-          {tableHeads.map((head: string, index: number) => (
-            // because the first "head" is a empty string we concatenate the array index
-            <th key={`${head}-${index}`}>{head}</th>
+    <MTable className={classes.table}>
+      <TableHead>
+        <TableRow>
+          {tableHeads.map((head, i) => (
+            <TableCell key={`${head}-${i}`}>{head}</TableCell>
           ))}
-        </tr>
-      </thead>
-      <tbody>{children(data)}</tbody>
-    </table>
+        </TableRow>
+      </TableHead>
+      <TableBody>{children(data)}</TableBody>
+    </MTable>
   )
 }
 

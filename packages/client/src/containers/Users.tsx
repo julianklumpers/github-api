@@ -1,12 +1,16 @@
 import React from 'react'
 import { gql } from 'apollo-boost'
-import Container from './../components/Container'
+import Container from '@material-ui/core/Container'
+import TableCell from '@material-ui/core/TableCell'
+import TableRow from '@material-ui/core/TableRow'
+import Grid from '@material-ui/core/Grid'
 import SearchTitle from './../components/SearchTitle'
 import Input from './../components/Input'
 import Table from '../components/Table'
 import { useQuery } from '@apollo/react-hooks'
 import { Link } from 'react-router-dom'
 import { User } from '@generated/graphql-types'
+import BreadCrumb from '../components/BreadCrumb'
 
 const GET_USERS = gql`
   query getUsersByName($username: String!) {
@@ -40,31 +44,32 @@ const Users: React.SFC = () => {
   }
 
   return (
-    <>
-      <Container>
-        <div className="column is-four-fifths">
+    <Container fixed>
+      <Grid container spacing={3}>
+        <Grid item xs={12}>
+          <BreadCrumb />
           <SearchTitle text="Type a username and hit enter" />
           <Input onEnter={handleSearch} defaultValue={username} />
-        </div>
-      </Container>
-      <Container>
-        <div className="column is-four-fifths">
+        </Grid>
+        <Grid item xs={12}>
           <Table tableHeads={['', 'Username', 'Score']} data={data} error={error} loading={loading}>
             {({ getUsersByName: users }: { getUsersByName: User[] }) =>
               users.map((user) => (
-                <tr key={user.id}>
-                  <td>{user.avatar_url && <img style={{ width: 64, borderRadius: '50%' }} src={user.avatar_url} />}</td>
-                  <td>
+                <TableRow key={user.id}>
+                  <TableCell>
+                    {user.avatar_url && <img style={{ width: 64, borderRadius: '50%' }} src={user.avatar_url} />}
+                  </TableCell>
+                  <TableCell>
                     <Link to={`/users/${user.login}`}>{user.login}</Link>
-                  </td>
-                  <td>{user.score}</td>
-                </tr>
+                  </TableCell>
+                  <TableCell>{user.score}</TableCell>
+                </TableRow>
               ))
             }
           </Table>
-        </div>
-      </Container>
-    </>
+        </Grid>
+      </Grid>
+    </Container>
   )
 }
 
