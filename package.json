@@ -1,0 +1,20 @@
+{
+  "name": "github-api",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "postinstall": "yarn generate",
+    "client": "yarn workspace client start",
+    "server": "yarn workspace server dev:o",
+    "start": "yarn generate && concurrently  \"yarn client\" \"yarn server\"",
+    "generate": "yarn workspace server generate-types"
+  },
+  "workspaces": [
+    "packages/*"
+  ],
+  "dependencies": {
+    "concurrently": "^5.0.0"
+  }
+}
